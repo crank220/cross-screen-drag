@@ -6,13 +6,13 @@
   "type": "module",
   "scripts": {
     "dev": "node server/dev-server.mjs",
+    "dev:lan": "HOST=0.0.0.0 node server/dev-server.mjs",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "node server/dev-server.mjs --prod"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "express": "^5.2.1",
     "lucide-vue-next": "^1.0.0",

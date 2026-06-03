@@ -1,6 +1,7 @@
 import express from 'express';
 import { randomUUID } from 'node:crypto';
 import { createServer } from 'node:http';
+import { networkInterfaces } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
@@ -11,6 +12,22 @@ const root = resolve(__dirname, '..');
 const isProd = process.argv.includes('--prod');
 const host = process.env.HOST || '127.0.0.1';
 const port = Number(process.env.PORT || 5173);
+
+function getLanUrls() {
+  const addresses = Object.values(networkInterfaces())
+    .flat()
+    .filter((item) => item && item.family === 'IPv4' && !item.internal);
+  const lanAddresses = addresses.filter((item) => isPrivateIpv4(item.address));
+  return (lanAddresses.length ? lanAddresses : addresses)
+    .map((item) => `http://${item.address}:${port}`);
+}
+
+function isPrivateIpv4(address) {
+  const [first, second] = address.split('.').map(Number);
+  return first === 10
+    || (first === 172 && second >= 16 && second <= 31)
+    || (first === 192 && second === 168);
+}
 
 const materialFiles = {
   poster: 'poster.png',
@@ -239,7 +256,10 @@ wss.on('connection', (socket) => {
 if (!isProd) {
   const vite = await createViteServer({
     root,
-    server: { middlewareMode: true },
+    server: {
+      middlewareMode: true,
+      hmr: { server },
+    },
     appType: 'spa',
   });
   app.use(vite.middlewares);
@@ -251,5 +271,15 @@ if (!isProd) {
 }
 
 server.listen(port, host, () => {
-  console.log(`Cross-screen drag app running at http://${host}:${port}`);
+  const localUrl = host === '0.0.0.0'
+    ? `http://127.0.0.1:${port}`
+    : `http://${host}:${port}`;
+  console.log(`Cross-screen drag app running at ${localUrl}`);
+  if (host === '0.0.0.0') {
+    const urls = getLanUrls();
+    if (urls.length) {
+      console.log('LAN access:');
+      urls.forEach((url) => console.log(`  ${url}`));
+    }
+  }
 });
