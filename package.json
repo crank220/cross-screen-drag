@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server/dev-server.mjs",
-    "dev:lan": "HOST=0.0.0.0 node server/dev-server.mjs",
+    "dev:lan": "node server/dev-server.mjs --host 0.0.0.0",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "node server/dev-server.mjs --prod"
   },

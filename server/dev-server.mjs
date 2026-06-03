@@ -10,8 +10,17 @@ import { createServer as createViteServer } from 'vite';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const isProd = process.argv.includes('--prod');
-const host = process.env.HOST || '127.0.0.1';
-const port = Number(process.env.PORT || 5173);
+const host = getCliOption('--host') || process.env.HOST || '127.0.0.1';
+const port = Number(getCliOption('--port') || process.env.PORT || 5173);
+
+function getCliOption(name) {
+  const inlineValue = process.argv.find((arg) => arg.startsWith(`${name}=`));
+  if (inlineValue) return inlineValue.slice(name.length + 1);
+
+  const index = process.argv.indexOf(name);
+  const value = index >= 0 ? process.argv[index + 1] : null;
+  return value && !value.startsWith('--') ? value : null;
+}
 
 function getLanUrls() {
   const addresses = Object.values(networkInterfaces())
