@@ -1,0 +1,31 @@
+{
+  "name": "cross-screen-drag",
+  "version": "1.0.0",
+  "description": "Vue3 + Node cross-page drag demo without Electron.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/dev-server.mjs",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "node server/dev-server.mjs --prod"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "lucide-vue-next": "^1.0.0",
+    "vue": "^3.5.35",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.1",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.16",
+    "vue-tsc": "^3.3.3"
+  }
+}
